@@ -7,7 +7,7 @@ int main(void) {
 	log_info(logger, "Servidor listo para recibir al cliente");
 	int cliente_fd = esperar_cliente(server_fd);
 
-	while (1) {
+	while (SI) {
 		sleep(3);
 		char* palabra = NULL;
 		int cod_op = recibir_operacion(cliente_fd);
@@ -33,8 +33,7 @@ int main(void) {
 	return EXIT_SUCCESS;
 }
 
-int cantidad_de_palabras(char** doble_char)
-{
+int cantidad_de_palabras(char** doble_char) {
 	int i = 0;
 	while(*doble_char!=NULL) //mientras no encuentre null sigue
 	{
@@ -45,7 +44,10 @@ int cantidad_de_palabras(char** doble_char)
 }
 
 void mostrar_palabras(t_log* logger, char* palabra) {
-
+	log_info(logger,"%s", palabra);
+	/*
+	 * no es necesario
+	 *
 	char** palabras;
 	int cantidad;
 
@@ -55,6 +57,6 @@ void mostrar_palabras(t_log* logger, char* palabra) {
 	for(int i=0; i<cantidad; i++)
 	{
 		log_info(logger,"%s\n", palabras[i]);
-	}
+	}*/
 
 }

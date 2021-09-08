@@ -8,6 +8,9 @@
 #include<commons/string.h>
 #include "utils.h"
 
+#define SI 1
+
+int cantidad_de_palabras(char** doble_char);
 void mostrar_palabras(t_log* logger, char* value);
 
-#endif /* SERVER_H_ */
+#endif

@@ -1,7 +1,6 @@
 #include"utils.h"
 
-int iniciar_servidor(void)
-{
+int iniciar_servidor(void){
 	int socket_servidor = -1;
 	int algo = -1;
 
@@ -77,8 +76,7 @@ int iniciar_servidor(void)
 
 }
 
-int esperar_cliente(int socket_servidor)
-{
+int esperar_cliente(int socket_servidor){
 	struct sockaddr_in dir_cliente;
 
 	socklen_t tam_direccion = sizeof(struct sockaddr_in);
@@ -94,8 +92,7 @@ int esperar_cliente(int socket_servidor)
 	}
 }
 
-int recibir_operacion(int socket_cliente)
-{
+int recibir_operacion(int socket_cliente){
 	int cod_op = -1;
 	if(recv(socket_cliente, &cod_op, sizeof(int), MSG_WAITALL) == -1)
 		cod_op = -1;
@@ -103,8 +100,7 @@ int recibir_operacion(int socket_cliente)
 	return cod_op;
 }
 
-char* copiar_palabra_de_buffer(void* buffer)
-{
+char* copiar_palabra_de_buffer(void* buffer){
 	int tamanio = 0;
 	char* mensaje = NULL;
 	int aux = 0;
@@ -118,8 +114,7 @@ char* copiar_palabra_de_buffer(void* buffer)
 	return mensaje;
 }
 
-void* recibir_buffer(int* size, int socket_cliente)
-{
+void* recibir_buffer(int* size, int socket_cliente){
 	void * buffer;
 
 	recv(socket_cliente, size, sizeof(int), MSG_WAITALL);
@@ -129,8 +124,7 @@ void* recibir_buffer(int* size, int socket_cliente)
 	return buffer;
 }
 
-void recibir_mensaje(int socket_cliente)
-{
+void recibir_mensaje(int socket_cliente){
 	int size;
 	char* buffer = recibir_buffer(&size, socket_cliente);
 	log_info(logger, "Me llego el mensaje %s", buffer);
@@ -138,8 +132,7 @@ void recibir_mensaje(int socket_cliente)
 }
 
 //podemos usar la lista de valores para poder hablar del for y de como recorrer la lista
-char* recibir_paquete(int socket_cliente)
-{
+char* recibir_paquete(int socket_cliente){
 	int size = 0;
 	char* palabra = NULL;
 

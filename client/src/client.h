@@ -10,10 +10,12 @@
 
 #include "utils.h"
 
+#define SI 1
 
 t_log* iniciar_logger(void);
 t_config* iniciar_config(void);
 void leer_consola(t_log*);
+char* tomar_palabras_de_consola(void);
 void paquete(int);
 void terminar_programa(int, t_log*, t_config*);
 

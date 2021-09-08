@@ -47,8 +47,20 @@ int main(void){
 	log_info(logger, "envie la clave al servidor");
 
 	//enviar PAQUETE al servidor
-	paquete(conexion);
-	log_info(logger, "envie el paquete de mensajes al servidor");
+	char* condicion = string_new();
+
+	while(SI){
+		paquete(conexion);
+		log_info(logger, "envie un paquete de mensajes al servidor");
+		printf("Desea continuar enviando mensajes?\n--->SI\n--->NO\n");
+		condicion = readline(">");
+		string_to_upper(condicion);
+		if(strcmp(condicion, "NO")== 0){
+			free(condicion);
+			break;
+		}
+		free(condicion);
+	}
 
 	log_info(logger, "termino el programa");
 	terminar_programa(conexion, logger, config);
@@ -82,15 +94,17 @@ void leer_consola(t_log* logger){
 	}
 	free(leido);
 }
-char* tomar_palabras_de_consola()
-{
+
+char* tomar_palabras_de_consola() {
 	char* leido = NULL;
 	char* palabras = string_new();
-	while(1)
-	{
+	while(SI) {
 		leido = readline(">");
 
-		if(strcmp(leido, "")==0) { break; }
+		if(strcmp(leido, "")==0) {
+			free(leido);
+			break;
+		}
 
 		string_trim(&leido);// <-- esta no es necesario
 		string_append_with_format(&palabras, "%s ", leido);
@@ -101,6 +115,7 @@ char* tomar_palabras_de_consola()
 	string_trim(&palabras);// <-- esta no es necesario
 	return palabras;
 }
+
 void paquete(int conexion){
 	//Ahora toca lo divertido!
 
@@ -109,7 +124,7 @@ void paquete(int conexion){
 
 	paquete = crear_paquete();
 
-	printf("\nPara dejar de ingresar por consola, aprete doble enter   ");
+	printf("\nPara dejar de ingresar por consola y enviar este mensaje aprete doble enter   ");
 
 	leido = tomar_palabras_de_consola();
 
