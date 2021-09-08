@@ -118,7 +118,7 @@ void enviar_paquete(t_paquete* paquete, int socket_cliente)
 	void* a_enviar = serializar_paquete(paquete, bytes);
 
 	send(socket_cliente, a_enviar, bytes, 0);
-	printf("mensaje enviado");
+	printf("paquete enviado");
 
 	free(a_enviar);
 }

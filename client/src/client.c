@@ -31,6 +31,7 @@ int main(void){
 
 
 	leer_consola(logger);
+	log_info(logger, "\ntermine de leer consola\n");
 
 
 	/*---------------------------------------------------PARTE 3-------------------------------------------------------------*/
@@ -71,17 +72,35 @@ void leer_consola(t_log* logger){
 
 	//El primero te lo dejo de yapa
 	// Acá la idea es que imprimas por el log lo que recibis de la consola.
-	printf("\nPara dejar de ingresar por consola, apretar enter   ");
+	printf("\nPara salir de leer consola, apretar doble enter   \n");
 	leido = readline(">");
 	while(strcmp(leido, "")!=0) {
 		log_info(logger, leido);
 		free(leido);
-		printf("\nPara dejar de ingresar por consola, apretar enter   ");
+		//printf("\nPara dejar de ingresar por consola, apretar enter   \n");
 		leido = readline(">");
 	}
 	free(leido);
 }
+char* tomar_palabras_de_consola()
+{
+	char* leido = NULL;
+	char* palabras = string_new();
+	while(1)
+	{
+		leido = readline(">");
 
+		if(strcmp(leido, "")==0) { break; }
+
+		string_trim(&leido);// <-- esta no es necesario
+		string_append_with_format(&palabras, "%s ", leido);
+
+		free(leido);
+	}
+
+	string_trim(&palabras);// <-- esta no es necesario
+	return palabras;
+}
 void paquete(int conexion){
 	//Ahora toca lo divertido!
 
@@ -90,15 +109,11 @@ void paquete(int conexion){
 
 	paquete = crear_paquete();
 
-	printf("\nPara dejar de ingresar por consola, apretar enter   ");
-	leido = readline(">");
-	while(strcmp(leido, "")!=0) {
-		agregar_a_paquete(paquete, (void*)leido, strlen(leido)+1);
-		free(leido);
-		printf("\nPara dejar de ingresar por consola, apretar enter   ");
-		leido = readline(">");
-	}
-	free(leido);
+	printf("\nPara dejar de ingresar por consola, aprete doble enter   ");
+
+	leido = tomar_palabras_de_consola();
+
+	agregar_a_paquete(paquete, (void*)leido, strlen(leido)+1);
 
 	enviar_paquete(paquete, conexion);
 	eliminar_paquete(paquete);

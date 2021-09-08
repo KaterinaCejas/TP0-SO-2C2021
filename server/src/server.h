@@ -5,8 +5,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <commons/log.h>
+#include<commons/string.h>
 #include "utils.h"
 
-void iterator(t_log* logger, char* value);
+void mostrar_palabras(t_log* logger, char* value);
 
 #endif /* SERVER_H_ */
