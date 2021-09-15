@@ -50,6 +50,7 @@ int main(void){
 	char* condicion = string_new();
 
 	while(SI){
+		conexion = crear_conexion(ip, puerto);
 		paquete(conexion);
 		log_info(logger, "envie un paquete de mensajes al servidor");
 		printf("Desea continuar enviando mensajes?\n--->SI\n--->NO\n");
@@ -106,13 +107,11 @@ char* tomar_palabras_de_consola() {
 			break;
 		}
 
-		string_trim(&leido);// <-- esta no es necesario
 		string_append_with_format(&palabras, "%s ", leido);
 
 		free(leido);
 	}
 
-	string_trim(&palabras);// <-- esta no es necesario
 	return palabras;
 }
 
@@ -124,7 +123,7 @@ void paquete(int conexion){
 
 	paquete = crear_paquete();
 
-	printf("\nPara dejar de ingresar por consola y enviar este mensaje aprete doble enter   ");
+	printf("\nPara dejar de ingresar por consola y enviar este mensaje aprete doble enter \n");
 
 	leido = tomar_palabras_de_consola();
 

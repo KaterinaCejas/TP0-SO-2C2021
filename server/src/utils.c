@@ -1,40 +1,9 @@
 #include"utils.h"
 
-int iniciar_servidor(void){
-	int socket_servidor = -1;
-	int algo = -1;
-
-	//basandome en la guia beej
-/*
-	struct sockaddr_in miDireccion;
-	miDireccion.sin_family = AF_INET;
-	miDireccion.sin_port = htons(4444);
-	miDireccion.sin_addr.s_addr = INADDR_ANY;
-	memset(&(miDireccion.sin_zero), '\0', 8);
-
-	socket_servidor = socket(AF_INET, SOCK_STREAM, 0);
-	if(socket_servidor == -1){
-		log_info(logger, "no se pudo crear el socket");
-		exit(EXIT_FAILURE);
-	}
-
-	socket_servidor = bind(socket_servidor, (void*) &miDireccion, sizeof(miDireccion));
-	if(socket_servidor != 0){
-		log_info(logger, "no se pudo bindear el socket (asociar el socket a un puerto)");
-		exit(EXIT_FAILURE);
-	}
-
-	listen(socket_servidor, SOMAXCONN);
-	if(socket_servidor == -1){ //SOMAXCONN es el maximo de conexiones en backlog que puede haber
-		log_info(logger, "El servidor no pudo escuchar");
-		exit(EXIT_FAILURE);
-	}
-
-    log_trace(logger, "Listo para escuchar a mi cliente");
-
-    return socket_servidor;
-
-*/
+void iniciar_servidor(void)
+{
+	int socket_servidor = 0;
+	int valor = 0;
 
     struct addrinfo hints;
     struct addrinfo *servinfo;
@@ -47,55 +16,87 @@ int iniciar_servidor(void){
 
     getaddrinfo(IP, PUERTO, &hints, &servinfo);
 
-    for (p=servinfo; p != NULL; p = p->ai_next) //por que usamos un for con un p no tengo la menor idea;
+    for (p=servinfo; p != NULL; p = p->ai_next)
     {
         // Creamos el socket de escucha del servidor
      socket_servidor = socket(p->ai_family, p->ai_socktype, p->ai_protocol);
      if(socket_servidor == -1){ log_info(logger, "No se pudo crear el socket"); exit(EXIT_FAILURE); }
 
     	// Asociamos el socket a un puerto
-     algo = bind(socket_servidor, p->ai_addr, p->ai_addrlen);
-     if(algo == -1){ log_info(logger, "No se pudo asociar el socket a un puerto"); exit(EXIT_FAILURE); }
+     valor = bind(socket_servidor, p->ai_addr, p->ai_addrlen);
+     if(valor == -1){ log_info(logger, "No se pudo asociar el socket a un puerto"); exit(EXIT_FAILURE); }
 
      break;
     }
 
-
     // Escuchamos las conexiones entrantes
-    algo = listen(socket_servidor, SOMAXCONN);
-	if(algo == -1){ //SOMAXCONN es el maximo de conexiones en backlog que puede haber
+    valor = listen(socket_servidor, SOMAXCONN);
+	if(valor == -1){ //SOMAXCONN es el maximo de conexiones en backlog que puede haber
 		log_info(logger, "El servidor no pudo escuchar");
 		exit(EXIT_FAILURE);
 	}
 
-    freeaddrinfo(servinfo);
+	freeaddrinfo(servinfo);
+	log_info(logger, "Servidor listo pa recibir al cliente");
 
-    //log_trace(logger, "Listo para escuchar a mi cliente");
+    // Esperamos al cliente
+	while(1)
+	{
+		struct sockaddr_in dir_cliente;
+		socklen_t tam_direccion = sizeof(struct sockaddr_in);
+		int socket_cliente = 0;
 
-    return socket_servidor;
+		// Aceptamos un nuevo cliente
 
-}
-
-int esperar_cliente(int socket_servidor){
-	struct sockaddr_in dir_cliente;
-
-	socklen_t tam_direccion = sizeof(struct sockaddr_in);
-	int socket_cliente = 0;
-
-	// Aceptamos un nuevo cliente
-	while(1){
 		socket_cliente = accept(socket_servidor, (void*)&dir_cliente, &tam_direccion);
+
 		if(socket_cliente == -1) { log_info(logger, "Error al aceptar a un nuevo cliente"); continue;}
 
 		log_info(logger, "Se conecto un cliente!");
-		return socket_cliente;
+
+		trabajemos_con_el_cliente(socket_cliente);
+
 	}
 }
+
+void trabajemos_con_el_cliente(int socket_cliente)
+{
+//	while (SI)
+//	{
+		char* palabra = NULL;
+		int cod_op = recibir_operacion(socket_cliente);
+
+		switch (cod_op)
+		{
+			case MENSAJE:
+				log_info(logger, "recibi codigo de operacion mensaje");
+				recibir_mensaje(socket_cliente);
+				break;
+			case PAQUETE:
+				palabra = recibir_paquete(socket_cliente);
+				log_info(logger, "Me llegaron los siguientes valores:\n");
+				log_info(logger,"%s", palabra);
+				break;
+			case -1:
+				log_error(logger, "cliente no pude leer lo que me enviaste");
+				//exit (EXIT_FAILURE);
+				break;
+			default:
+				log_warning(logger,	"Operacion desconocida. No quieras meter la pata");
+				break;
+		}
+
+//	}
+}
+
 
 int recibir_operacion(int socket_cliente){
 	int cod_op = -1;
 	if(recv(socket_cliente, &cod_op, sizeof(int), MSG_WAITALL) == -1)
+	{
 		cod_op = -1;
+		log_warning(logger,	"cod_op = -1. No quieras meter la pata");
+	}
 
 	return cod_op;
 }
